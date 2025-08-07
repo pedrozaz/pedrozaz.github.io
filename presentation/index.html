@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guilherme Pedroza - Backend Developer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="hero">
+    <div class="container">
+        <h1 class="animate-fade-in-down">Guilherme B. S. Pedroza</h1>
+        <h2 class="animate-fade-in-down">Backend Java Developer</h2>
+        <a href="#contato" class="btn animate-fade-in-up">Entre em Contato</a>
+    </div>
+</header>
+
+<main>
+    <section id="sobre" class="section">
+        <div class="container">
+            <h3 class="reveal">About Me</h3>
+            <p class="reveal">
+                I'm a Computer Engineering student at Universidade de Uberaba. I’m passionate about backend development and building practical solutions through clean and scalable code. My main stack includes Java (8+), Spring Boot, and relational databases such as PostgreSQL and MySQL.
+                I have hands-on experience developing backend applications using modern development practices like Clean Architecture, SOLID principles, Domain-Driven Design and containerization with Docker. I’ve also worked with web automation using Playwright and am currently exploring the use of AI in Java applications through the Deep Java Library (DJL).
+                I’m proficient with Git, GitHub, GitLab, Postman for API testing, and familiar with messaging systems like Kafka and RabbitMQ.
+            </p>
+        </div>
+    </section>
+
+    <section id="habilidades" class="section section-dark">
+        <div class="container">
+            <h3 class="reveal">Skills</h3>
+            <div class="skills-container reveal">
+                <span class="skill">Java</span>
+                <span class="skill">Spring Boot</span>
+                <span class="skill">SQLServer</span>
+                <span class="skill">JUnit</span>
+                <span class="skill">Apache Kafka</span>
+                <span class="skill">RabbitMQ</span>
+                <span class="skill">Playwright</span>
+                <span class="skill">Thymeleaf</span>
+                <span class="skill">HTML</span>
+                <span class="skill">CSS</span>
+                <span class="skill">DJL</span>
+                <span class="skill">Hibernate</span>
+                <span class="skill">Docker</span>
+                <span class="skill">PostgreSQL</span>
+                <span class="skill">Git</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="projetos" class="section">
+        <div class="container">
+            <h3 class="reveal">Projects</h3>
+            <div class="projects-grid">
+                <div class="project-card reveal">
+                    <img src="images/pricealert.png" alt="Price Alert API">
+                    <h4>Price Alert API</h4>
+                    <p>A backend service built with Java and Spring Boot that monitors product prices from online stores. It sends email alerts to users when a product's price drops below their desired target.</p>
+                    <a href="https://github.com/pedrozaz/price-alert" target="_blank">See on GitHub</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato" class="section section-dark">
+        <div class="container">
+            <h3 class="reveal">Contact</h3>
+            <h4 class="reveal"> I'm available for new opportunities and collaborations. Contact me!</h4>
+            <div class="contact-links reveal">
+                <a href="mailto:guilhermebarb0sa@proton.me" class="btn">Email</a>
+                <a href="https://www.linkedin.com/in/pedrozagui/" target="_blank" class="btn">LinkedIn</a>
+                <a href="https://github.com/pedrozaz" target="_blank" class="btn">GitHub</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2025 PEDROZA, Guilherme. All rights reserved.</p>
+    </div>
+</footer>
+<script>
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    const elementsToReveal = document.querySelectorAll('.reveal');
+    elementsToReveal.forEach((element) => {
+        observer.observe(element);
+    });
+</script>
+</body>
+</html>
