@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv1 from Scratch: Methodological Foundation</title>
+    <meta name="description"
+        content="A comprehensive deep dive into implementing YOLOv1 from scratch using PyTorch, detailing mathematical loss, focal loss collapse, and hardware constraints.">
+    <!-- Reuse core styles from root -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;600;800&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&display=swap"
+        rel="stylesheet">
+
+    <!-- MathJax for rendering LaTeX formulas -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <style>
+        /* Article-Specific Styles */
+        :root {
+            --font-serif: 'Merriweather', serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+        }
+
+        .article-header {
+            padding: 8rem 2rem 4rem;
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .article-meta {
+            color: var(--accent-1);
+            font-family: var(--font-sans);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .article-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            font-family: var(--font-sans);
+        }
+
+        .article-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+            font-family: var(--font-serif);
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 350px;
+            border-radius: 20px;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('../images/yolo.png') center/cover no-repeat;
+            border: 1px solid var(--surface-border);
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-image::after {
+            content: "YOLOv1 : SCIENTIFIC BASELINE";
+            font-family: var(--font-mono);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 2.2rem;
+            letter-spacing: 4px;
+        }
+
+        .article-content {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 2rem 8rem;
+            font-family: var(--font-serif);
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #d1d1d6;
+        }
+
+        .article-content h2 {
+            font-family: var(--font-sans);
+            font-size: 2.2rem;
+            margin: 4rem 0 1.5rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--surface-border);
+            padding-bottom: 0.5rem;
+        }
+
+        .article-content h3 {
+            font-family: var(--font-sans);
+            font-size: 1.5rem;
+            margin: 2.5rem 0 1rem;
+            color: var(--text-primary);
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content ul {
+            margin: 0 0 1.5rem 2rem;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .article-content li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .article-content li::before {
+            content: "•";
+            color: var(--accent-1);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+            position: absolute;
+        }
+
+        .article-content strong {
+            color: var(--text-primary);
+        }
+
+        /* Callouts / Pull quotes */
+        blockquote {
+            font-style: italic;
+            font-size: 1.25rem;
+            border-left: 4px solid var(--accent-1);
+            margin: 3rem 0;
+            padding: 1rem 2rem;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.05), transparent);
+            border-radius: 0 12px 12px 0;
+            color: var(--text-primary);
+        }
+
+        /* Tech Highlights and Code */
+        .tech-highlight {
+            background: rgba(15, 15, 20, 0.8);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--surface-border);
+            margin: 3rem 0;
+            font-family: var(--font-sans);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .tech-highlight h4 {
+            color: var(--accent-3);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-left: 2px solid var(--accent-2);
+        }
+
+        .code-inline {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: var(--accent-2);
+        }
+
+        .experiment-card {
+            border: 1px solid var(--surface-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .experiment-card .badge-result {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent-1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+        }
+
+        .block-divider {
+            text-align: center;
+            font-size: 2rem;
+            letter-spacing: 1rem;
+            color: var(--text-secondary);
+            margin: 4rem 0;
+            opacity: 0.5;
+        }
+
+        /* Back to home */
+        .back-nav {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 1000;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(15, 15, 20, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid var(--surface-border);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent-1);
+            color: var(--accent-1);
+            background: rgba(15, 15, 20, 1);
+        }
+
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 2.5rem;
+            }
+
+            .article-content {
+                padding: 0 1.5rem 5rem;
+                font-size: 1.05rem;
+            }
+
+            .back-nav {
+                top: 1rem;
+                left: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <div class="back-nav">
+        <a href="../" class="back-btn">
+            &larr; Back to Portfolio
+        </a>
+    </div>
+
+    <article>
+        <header class="article-header fade-in-up">
+            <div class="article-meta">Methodological Foundation • PyTorch</div>
+            <h1 class="article-title">YOLOv1 from Scratch</h1>
+            <p class="article-subtitle">A scientific and practical baseline for understanding single-stage detection
+                architecture, mapping the mathematical, structural, and hardware bottlenecks of legacy detection
+                systems.</p>
+
+            <div class="hero-image"></div>
+        </header>
+
+        <section class="article-content fade-in-up delay-1">
+            <p>Object detection stands as a cornerstone of modern computer vision. While off-the-shelf frameworks
+                abstract the complexity, building a foundational model from scratch is critical to mastering the
+                underlying mathematics. I built a complete implementation of the original <strong>YOLO
+                    algorithm</strong> using PyTorch. This deep dive maps the mathematical, structural, and hardware
+                bottlenecks encountered during training.</p>
+
+            <p>These empirical findings directly act as the theoretical groundwork for subsequent projects (like <span
+                    class="code-inline">estaciona-ai</span>), enabling a calculated transition from this baseline to
+                state-of-the-art YOLOv8 architectures.</p>
+
+            <h2>1. Hardware Constraints & Engineering</h2>
+            <p>Development and training were conducted under a strict <strong>6GB VRAM constraint (RTX 2060)</strong>.
+                This physical limitation drove several critical architectural engineering decisions to prevent <span
+                    class="code-inline">CUDA Out-Of-Memory (OOM)</span> errors:</p>
+
+            <ul>
+                <li><strong>Gradient Accumulation:</strong> Implemented to maintain an effective batch size of 16 using
+                    micro-batches. This ensured mathematical stability for the optimizer despite not being able to load
+                    16 images concurrently into VRAM.</li>
+                <li><strong>Detection Head Optimization:</strong> The dense layers attached to the convolutional
+                    backbone were structurally compressed from approximately <strong>~250M down to ~25M
+                        parameters</strong> to dramatically reduce the memory footprint during the backward pass.</li>
+            </ul>
+
+            <h2>2. The Experimental Journey</h2>
+            <p>To validate convergence hypotheses, a series of controlled experiments were executed on the
+                <strong>Pascal VOC 2012</strong> dataset. I documented each step of the iterative process, tracking
+                precisely when and why the network failed.</p>
+
+            <div class="experiment-card">
+                <h3>Exp 1: Baseline (From-Scratch)</h3>
+                <div class="badge-result">Result: mAP@0.5 = 0.0049</div>
+                <p><strong>Goal:</strong> Train a simplified YOLO architecture from scratch with random weights on
+                    Pascal VOC.</p>
+                <p><strong>Failure Reason:</strong> Reducing the DetectionHead parameters to fit the 6GB VRAM severely
+                    limited spatial abstraction capability. Combined with the lack of ImageNet pre-training, the model
+                    overfitted to predicting background in most grid cells, resulting in excessive false negatives.</p>
+            </div>
+
+            <div class="experiment-card">
+                <h3>Exp 2: Focal Loss</h3>
+                <div class="badge-result">Result: mAP@0.5 = 0.0000</div>
+                <p><strong>Goal:</strong> Implement Focal Loss to handle the extreme class imbalance and penalize
+                    massive background predictions.</p>
+                <p><strong>Failure Reason:</strong> The modulation factor completely zeroed the gradients for background
+                    predictions early in training. The network effectively stopped penalizing the background entirely,
+                    which flooded the prediction grid with false positives and utterly collapsed overall precision.</p>
+            </div>
+
+            <div class="experiment-card">
+                <h3>Exp 3: Transfer Learning (Frozen ResNet18)</h3>
+                <div class="badge-result">Result: mAP@0.5 = 0.0356</div>
+                <p><strong>Decision:</strong> Because object detection datasets like VOC lack the volume to teach basic
+                    feature extraction (edges, textures) from random weights, the custom backbone was discarded in favor
+                    of a pre-trained ResNet18 backbone initialized on ImageNet.</p>
+                <p><strong>Result:</strong> Replacing the backbone and keeping it frozen yielded a <strong>~7x
+                        improvement</strong> in mAP. However, freezing the backbone prevented critical spatial
+                    regression adaptation needed for bounding boxes.</p>
+            </div>
+
+            <div class="experiment-card">
+                <h3>Exp 4: Full Fine-Tuning</h3>
+                <div class="badge-result">Result: mAP@0.5 = 0.0236</div>
+                <p><strong>Goal:</strong> Unfreeze the entire ResNet18 backbone and train with a lower learning rate
+                    <span class="code-inline">1e-5</span> to encourage spatial feature adaptation.</p>
+                <p><strong>Failure Reason:</strong> The mAP degraded. Fine-tuning with an excessively small micro-batch
+                    size destabilized the Batch Normalization layers, introducing severe gradient noise that corrupted
+                    the pre-trained weights.</p>
+            </div>
+
+            <h2>3. Mathematical Foundations: The Focal Loss Collapse</h2>
+            <p>Why did Experiment 2 fail so catastrophically? The YOLOv1 loss function is a unified sum of squared
+                errors, balanced by two constants: $\lambda_{coord} = 5$ to emphasize bounding box accuracy, and
+                $\lambda_{noobj} = 0.5$ to penalize the overwhelming number of background cells.</p>
+
+            <p>During the <strong>Focal Loss Experiment</strong>, the standard Mean Squared Error (MSE) for background
+                confidence was replaced with a Focal Loss modulation to handle extreme class imbalance.</p>
+
+            <div class="math-box">
+                <p>A modulating factor $(1 - \hat{C}_i)^\gamma$ (with $\gamma = 2$) was applied to the background
+                    confidence loss. Since the target confidence $C_i$ for a background cell is exactly $0$, the focal
+                    formula simplifies brutally:</p>
+                <p>$$ Loss_{noobj}^{(focal)} = \sum_{i=0}^{S^2} \sum_{j=0}^{B} \mathbb{1}_{ij}^{noobj} \cdot
+                    \hat{C}_i^\gamma \cdot (\hat{C}_i - 0)^2 \implies \lambda_{noobj} \cdot \hat{C}_i^4 $$</p>
+            </div>
+
+            <p><strong>Cause of Collapse:</strong> When the network initializes, the predicted confidence $\hat{C}_i$ in
+                any given cell is typically close to zero (e.g., $0.1$). Squaring this factor $\hat{C}_i^2$
+                exponentially shrinks the already small gradients produced by the MSE. The network effectively stopped
+                updating weights to suppress background predictions. The loss vanished before it could backpropagate,
+                leaving the grid vulnerable to false positives.</p>
+
+            <div class="block-divider">***</div>
+
+            <h2>Conclusion: Architecting for YOLOv8</h2>
+            <p>The failures documented in this baseline repository are highly valuable—they empirically validate the
+                necessity of architectural advancements developed in modern detectors. Using <strong>YOLOv8</strong> in
+                future projects directly bypasses these exact hardware and mathematical bottlenecks through:</p>
+
+            <ul>
+                <li><strong>Decoupled Heads:</strong> Preventing spatial variance forces from corrupting class
+                    probability predictions.</li>
+                <li><strong>Mosaic Augmentation:</strong> Simulating far larger batch sizes to stabilize gradients on
+                    low-VRAM hardware (like Raspberry Pis or the RTX 2060).</li>
+                <li><strong>Anchor-Free & Task-Aligned Assignment:</strong> Eliminating the rigid $7 \times 7$ grid
+                    limitations that caused the excessive background overfitting observed in Experiment 1.</li>
+                <li><strong>CIoU Loss:</strong> Providing significantly more logical bounding box regression than the
+                    standard scalar MSE could ever offer.</li>
+            </ul>
+
+            <div style="margin-top: 5rem; text-align: center;">
+                <a href="https://github.com/pedrozaz/obj-detector-from-scratch/releases/tag/research-final"
+                    target="_blank" class="btn btn-primary"
+                    style="font-family: var(--font-sans); padding: 1rem 3rem; font-size: 1.1rem;">
+                    Examine the Source Code on GitHub
+                </a>
+            </div>
+        </section>
+    </article>
+
+    <footer>
+        <div
+            style="text-align: center; color: var(--text-secondary); padding: 2rem; font-family: var(--font-sans); border-top: 1px solid var(--surface-border);">
+            <p>&copy; 2025 Guilherme Pedroza. Engineering & Mathematics.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Reveal Animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>
