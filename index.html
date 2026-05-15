@@ -1,496 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guilherme Pedroza | Computer Engineering Student</title>
-    <meta name="description" content="Portfolio of Guilherme Pedroza, an Undergraduate Computer Engineering Student.">
+    <title>Guilherme Pedroza | High Performance Engineering</title>
+    <meta name="description" content="Portfolio of Guilherme Pedroza. Backend & Machine Learning Engineering.">
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Outfit:wght@300;400;600;800&display=swap"
-        rel="stylesheet">
-    <style>
-        .lang-switch-modern {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin-right: 1.5rem;
-            font-family: var(--font-mono);
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Outfit:wght@400;700;800;900&display=swap" rel="stylesheet">
 
-        .lang-opt {
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: var(--transition);
-        }
-
-        .lang-opt:hover {
-            color: var(--text-primary);
-        }
-
-        .lang-opt.active {
-            color: var(--accent-red);
-        }
-
-        .lang-sep {
-            color: var(--surface-border);
-            user-select: none;
-        }
-
-        @media (max-width: 900px) {
-            .lang-switch-modern {
-                margin-right: 0;
-                margin-left: 1rem;
-            }
-
-            .nav-container {
-                justify-content: space-around;
-            }
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js" defer></script>
+    <script src="js/main.js" defer></script>
 </head>
 
 <body>
-    <div class="bg-grid"></div>
-    <div class="bg-glow glow-1"></div>
-    <div class="bg-glow glow-2"></div>
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div id="boot-text">BOOT SEQUENCE INITIATED...</div>
+        <div class="loader-bar-container">
+            <div id="loader-bar"></div>
+        </div>
+    </div>
 
-    <nav class="glass-nav">
-        <div class="nav-container">
-            <a href="#home" class="logo">Pedroza<span class="accent">_</span></a>
-            <div class="lang-switch-modern">
-                <span id="lang-en" class="lang-opt active" onclick="setLanguage('en')">EN</span>
-                <span class="lang-sep">|</span>
-                <span id="lang-pt" class="lang-opt" onclick="setLanguage('pt')">PT</span>
-            </div>
-            <div class="nav-links">
-                <a href="#about" class="nav-link" data-i18n="nav_about">About</a>
-                <a href="#skills" class="nav-link" data-i18n="nav_skills">Skills</a>
-                <a href="#projects" class="nav-link" data-i18n="nav_projects">Projects</a>
-                <a href="#hackathons" class="nav-link" data-i18n="nav_hackathons">Hackathons</a>
-                <a href="#contact" class="btn btn-outline nav-cta small-btn" data-i18n="nav_contact">Contact</a>
-            </div>
+    <!-- CANVAS BG & NOISE -->
+    <canvas id="bg-canvas"></canvas>
+    <div class="noise-overlay"></div>
+
+    <!-- TELEMETRY OVERLAYS -->
+    <div class="telemetry telemetry-tl">SYS.STATUS // NOMINAL</div>
+    <div class="telemetry telemetry-br">SCROLL_V: <span id="scroll-telemetry">0.00</span>%<br>RES: <span id="res-telemetry"></span></div>
+    <div class="telemetry telemetry-bl">POS_X: <span id="mouse-x">0</span><br>POS_Y: <span id="mouse-y">0</span></div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <nav id="nav">
+        <div class="nav-links">
+            <a href="#" class="nav-link glitch-hover" onclick="scrollToPanel(1); return false;" data-i18n="nav_about">About</a>
+            <a href="#" class="nav-link glitch-hover" onclick="scrollToPanel(2); return false;" data-i18n="nav_projects">Projects</a>
+            <a href="#" class="nav-link glitch-hover" onclick="scrollToPanel(5); return false;" data-i18n="nav_contact">Contact</a>
+            <a href="#" class="nav-link glitch-hover" id="lang-toggle" onclick="toggleLang(event)">PT</a>
         </div>
     </nav>
 
-    <main>
-        <header id="home" class="hero">
-            <div class="hero-content">
-                <div class="badge fade-in-up" data-i18n="hero_badge">Available for Work</div>
-                <h1 class="fade-in-up delay-1">
-                    <span data-i18n="hero_hi">Hi, I'm</span> <br />
-                    <span class="gradient-text">Guilherme Pedroza</span>
-                </h1>
-                <h2 class="fade-in-up delay-2 subtitle" data-i18n="hero_subtitle">Computer Engineering Student</h2>
-                <p class="fade-in-up delay-3 description" data-i18n="hero_desc">
-                    Undergraduate student exploring backend development, computer vision, and machine learning. Always learning and building projects with Java, Rust, and Python.
-                </p>
-                <div class="hero-actions fade-in-up delay-4">
-                    <a href="#projects" class="btn btn-primary" data-i18n="hero_cta1">Explore Work</a>
-                    <a href="https://github.com/pedrozaz" target="_blank" class="btn btn-secondary"
-                        data-i18n="hero_cta2">GitHub Profile</a>
-                </div>
-            </div>
-
-            <div class="hero-visual fade-in-up delay-5">
-                <div class="glass-card code-card float-anim">
-                    <div class="mac-header">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
-                        <span class="title">main.rs</span>
-                    </div>
-                    <pre><code><span class="keyword">use</span> axum::{routing::get, Router};
-
-<span class="keyword">#[tokio::main]</span>
-<span class="keyword">async fn</span> <span class="function">main</span>() {
-    <span class="keyword">let</span> app = Router::new()
-        .route(<span class="string">"/developer/status"</span>, get(status));
+    <main class="assembly-wrapper" id="assembly-wrapper">
         
-    <span class="comment">// Binding to high-performance listener</span>
-    <span class="keyword">let</span> listener = tokio::net::TcpListener::bind(<span class="string">"0.0.0.0:8080"</span>).<span class="keyword">await</span>.unwrap();
-    axum::serve(listener, app).<span class="keyword">await</span>.unwrap();
-}
-
-<span class="keyword">async fn</span> <span class="function">status</span>() -&gt; &amp;<span class="keyword">'static</span> str {
-    <span class="string">"Ready to build scalable systems!"</span>
-}</code></pre>
+        <!-- PANEL 0: HERO -->
+        <section class="panel" id="panel-hero">
+            <div class="bg-text">ENGINEER</div>
+            <div class="panel-content">
+                <div class="hero-subtitle gsap-reveal" data-i18n="hero_badge">AVAILABLE FOR WORK // SYSTEM READY</div>
+                <div class="hero-title-wrapper">
+                    <h1 class="huge-text gsap-reveal">GUILHERME</h1>
+                    <h1 class="huge-text outline gsap-reveal">PEDROZA</h1>
                 </div>
-            </div>
-        </header>
-
-        <section id="about" class="section">
-            <div class="section-title reveal">
-                <h2><span data-i18n="about_title1">About</span> <span class="gradient-text"
-                        data-i18n="about_title2">Me</span></h2>
-                <div class="line"></div>
-            </div>
-            <div class="about-container reveal delay-1">
-                <div class="glass-card about-card">
-                    <p data-i18n="about_p1">
-                        I'm a Computer Engineering undergraduate student based in Uberlândia-MG, Brazil. I'm highly passionate about software development and currently diving deep into machine learning and backend engineering.
-                    </p>
-                    <p data-i18n="about_p2">
-                        My journey involves exploring the intersection of AI and backend systems. I've been gaining hands-on experience by building projects — from implementing object detection models to developing real-time services using <strong>Java</strong>, <strong>Python</strong>, and <strong>Rust</strong>.
-                    </p>
-                    <p data-i18n="about_p3">
-                        I'm driven by curiosity and the desire to solve real-world problems. Whether it's participating in hackathons like NASA Space Apps or researching computer vision, I'm always looking for opportunities to learn, contribute, and grow as an engineer.
-                    </p>
+                <div style="margin-top: 4rem;" class="gsap-reveal">
+                    <a href="#" onclick="scrollToPanel(2); return false;" class="btn-brutalist filled" data-i18n="hero_cta1" data-magnetic>Explore Work</a>
                 </div>
             </div>
         </section>
 
-        <section id="skills" class="section">
-            <div class="section-title reveal">
-                <h2><span data-i18n="skills_title1">Tech</span> <span class="gradient-text"
-                        data-i18n="skills_title2">Stack</span></h2>
-                <div class="line"></div>
-            </div>
-            <div class="skills-grid reveal delay-1">
-                <div class="skill-tag">Rust</div>
-                <div class="skill-tag">Python</div>
-                <div class="skill-tag">Java</div>
-                <div class="skill-tag">Axum & Tokio</div>
-                <div class="skill-tag">Spring Ecosystem</div>
-                <div class="skill-tag">PyTorch & TensorFlow</div>
-                <div class="skill-tag">YOLOv8 & OpenCV</div>
-                <div class="skill-tag">Computer Vision</div>
-                <div class="skill-tag">PostgreSQL</div>
-                <div class="skill-tag">Apache Kafka</div>
-                <div class="skill-tag">Docker & Linux</div>
-                <div class="skill-tag" data-i18n="skill_ds">Distributed Systems</div>
+        <!-- PANEL 1: ABOUT (SYS INFO) -->
+        <section class="panel" id="panel-info">
+            <div class="bg-text">SYS INFO</div>
+            <div class="panel-content">
+                <div class="terminal gsap-reveal">
+                    <div class="terminal-header">
+                        <div class="dot red" style="width:12px;height:12px;border-radius:50%;background:#ff5f56;"></div>
+                        <div class="dot yellow" style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;"></div>
+                        <div class="dot green" style="width:12px;height:12px;border-radius:50%;background:#27c93f;"></div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line" style="margin-bottom: 2rem;">
+                            <span class="terminal-prompt" style="color:var(--neon)">></span>
+                            <span style="color: #fff" data-i18n="about_p1">Computer Engineering student exploring the intersection of AI and backend systems. Driven by the desire to solve real-world problems through robust, scalable code.</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-prompt" style="color:var(--neon)">pedroza@dev:~$</span>
+                            <span class="terminal-command">cat skills.json</span>
+                        </div>
+                        <div class="terminal-line" style="color: var(--neon); margin-top: 0.5rem;">
+                            {<br>
+                            &nbsp;&nbsp;"languages": ["Rust", "Python", "Java"],<br>
+                            &nbsp;&nbsp;"backend": ["Axum", "Tokio", "Spring Boot"],<br>
+                            &nbsp;&nbsp;"ml_vision": ["PyTorch", "YOLOv8", "OpenCV"],<br>
+                            &nbsp;&nbsp;"infra": ["PostgreSQL", "Kafka", "Docker"]<br>
+                            }
+                        </div>
+                        <div class="terminal-line" style="margin-top: 1rem;">
+                            <span class="terminal-prompt" style="color:var(--neon)">pedroza@dev:~$</span>
+                            <span class="terminal-command" style="animation: blink 1s infinite">_</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section id="projects" class="section">
-            <div class="section-title reveal">
-                <h2><span data-i18n="proj_title1">Featured</span> <span class="gradient-text"
-                        data-i18n="proj_title2">Projects</span></h2>
-                <div class="line"></div>
+        <!-- PANEL 2: PROJECT 1 -->
+        <section class="panel" id="panel-proj1">
+            <div class="bg-text accent">ESTACIONA</div>
+            <div class="panel-content">
+                <div class="project-card">
+                    <div class="project-info gsap-reveal">
+                        <div class="project-number">[SYS.BUILD.01]</div>
+                        <h3 class="project-title glitch-hover" data-magnetic>Estaciona AI</h3>
+                        <div class="project-tech">
+                            <span>Rust</span><span>Axum</span><span>Ultralytics YOLO</span><span>PostgreSQL</span>
+                        </div>
+                        <p class="project-desc" data-i18n="proj0_desc">Real-time parking guidance system. YOLOv8 edge inference detects spot occupancy and streams state via WebSocket to a Rust/Axum server.</p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                            <a href="https://estaciona.tech/" target="_blank" class="btn-brutalist" data-magnetic data-i18n="proj_live_btn">Live Platform</a>
+                            <button class="btn-brutalist inspect-btn" data-project="estaciona" data-magnetic style="cursor: pointer;">[ + INSPECT ]</button>
+                        </div>
+                    </div>
+                    <div class="project-visual gsap-reveal blueprint-container" style="--bp-color: #00ff41;" data-magnetic>
+                        <div class="blueprint-bg" style="background-image: url('assets/img/estaciona_blueprint.png');"></div>
+                        <div class="blueprint-overlay scanline"></div>
+                        <div class="blueprint-data-overlay">
+                            <span>> LIDAR_SCAN: ACTIVE</span>
+                            <span>> BBOX_DETECTED: 14</span>
+                            <span>> OCCUPANCY_STATE: 85%</span>
+                        </div>
+                        <h2 class="blueprint-title">ESTACIONA.AI</h2>
+                    </div>
+                </div>
             </div>
-            <div class="projects-grid">
+        </section>
+
+        <!-- PANEL 3: PROJECT 2 -->
+        <section class="panel" id="panel-proj2">
+            <div class="bg-text">YOLO.VIS</div>
+            <div class="panel-content">
+                <div class="project-card">
+                    <div class="project-info gsap-reveal">
+                        <div class="project-number">[SYS.BUILD.02]</div>
+                        <h3 class="project-title glitch-hover" data-magnetic>YOLOv1 Native</h3>
+                        <div class="project-tech">
+                            <span>Python</span><span>PyTorch</span><span>ResNet18</span>
+                        </div>
+                        <p class="project-desc" data-i18n="proj1_desc">Scientific baseline for single-stage object detection, implemented from scratch in PyTorch under hardware constraints.</p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                            <a href="https://github.com/pedrozaz/obj-detector-from-scratch/" target="_blank" class="btn-brutalist" data-magnetic data-i18n="proj_btn">GitHub Repo</a>
+                            <button class="btn-brutalist inspect-btn" data-project="yolo" data-magnetic style="cursor: pointer;">[ + INSPECT ]</button>
+                        </div>
+                    </div>
+                    <div class="project-visual gsap-reveal blueprint-container" style="--bp-color: #00e5ff;" data-magnetic>
+                        <div class="blueprint-bg" style="background-image: url('assets/img/yolo_blueprint.png');"></div>
+                        <div class="blueprint-overlay scanline"></div>
+                        <div class="blueprint-data-overlay">
+                            <span>> INFERENCE: ONLINE</span>
+                            <span>> TENSORS: FLOAT16</span>
+                            <span>> LATENCY: 12ms</span>
+                        </div>
+                        <h2 class="blueprint-title">YOLO.VISION</h2>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL 4: PROJECT 3 -->
+        <section class="panel" id="panel-proj3">
+            <div class="bg-text accent">REDLINE</div>
+            <div class="panel-content">
+                <div class="project-card">
+                    <div class="project-info gsap-reveal">
+                        <div class="project-number">[SYS.BUILD.03]</div>
+                        <h3 class="project-title glitch-hover" data-magnetic>Redline F1</h3>
+                        <div class="project-tech">
+                            <span>Java 25</span><span>TensorFlow</span><span>Spring Boot</span>
+                        </div>
+                        <p class="project-desc" data-i18n="proj2_desc">Hybrid sports prediction system for F1 using vectorized Monte Carlo simulations. Microservices execute thousands of scenarios per second.</p>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                            <a href="https://github.com/pedrozaz/redline-project/" target="_blank" class="btn-brutalist" data-magnetic data-i18n="proj_btn">GitHub Repo</a>
+                            <button class="btn-brutalist inspect-btn" data-project="redline" data-magnetic style="cursor: pointer;">[ + INSPECT ]</button>
+                        </div>
+                    </div>
+                    <div class="project-visual gsap-reveal blueprint-container" data-magnetic>
+                        <div class="blueprint-bg" style="background-image: url('assets/img/redline_blueprint.png');"></div>
+                        <div class="blueprint-overlay scanline"></div>
+                        <div class="blueprint-data-overlay">
+                            <span>> SIM_RUNNING</span>
+                            <span>> MONTE_CARLO_VECTORS: ACTIVE</span>
+                            <span>> TENSORS_LOADED: TRUE</span>
+                        </div>
+                        <h2 class="blueprint-title">REDLINE</h2>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PANEL 5: CONTACT -->
+        <section class="panel" id="panel-contact">
+            <div class="bg-text">END_SYS</div>
+            <div class="panel-content" style="text-align: center;">
+                <h2 class="huge-text gsap-reveal">LET'S</h2>
+                <h2 class="huge-text outline gsap-reveal" style="margin-top: -4vw; margin-bottom: 3rem;"><span class="accent-text">TALK</span></h2>
                 
-                <div class="glass-card project-card featured reveal delay-1">
-                    <div class="project-image" style="background: #080808; display: flex; align-items: center; justify-content: center; padding: 2rem; position: relative; overflow: hidden;">
-                        <div style="font-family: var(--font-mono); color: var(--accent-green); font-size: 0.9rem; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; opacity: 0.85;">
-                            <div><span style="color:var(--text-secondary);">$</span> systemctl status estaciona-vision</div>
-                            <div style="color: var(--text-primary); margin-top: 5px;">● estaciona-vision.service - YOLOv8 Edge Inference</div>
-                            <div>&nbsp;&nbsp;&nbsp;Loaded: loaded</div>
-                            <div>&nbsp;&nbsp;&nbsp;Active: <span style="color: var(--accent-green); font-weight: bold;">active (running)</span></div>
-                            <div style="margin-top: 10px;"><span style="color:var(--text-secondary);">$</span> tail -f /var/log/estaciona.log</div>
-                            <div>> WebSocket connection established.</div>
-                            <div>> Tracking: 42/50 parking spots.</div>
-                            <div style="margin-top: 15px; display: flex; gap: 8px;">
-                                <span style="display:inline-block; width:12px; height:12px; background:var(--accent-red); border-radius:2px; box-shadow: 0 0 5px var(--accent-red);"></span>
-                                <span style="display:inline-block; width:12px; height:12px; background:var(--accent-green); border-radius:2px; box-shadow: 0 0 5px var(--accent-green);"></span>
-                                <span style="display:inline-block; width:12px; height:12px; background:var(--accent-green); border-radius:2px; box-shadow: 0 0 5px var(--accent-green);"></span>
-                                <span style="display:inline-block; width:12px; height:12px; background:var(--accent-red); border-radius:2px; box-shadow: 0 0 5px var(--accent-red);"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3><span class="mono-text" style="color: var(--accent-red); font-size: 1rem; margin-right: 10px;">[01]</span> Estaciona AI</h3>
-                        <p class="project-desc" data-i18n="proj0_desc">Real-time parking guidance system combining computer vision, distributed systems, and mobile navigation. YOLOv8 edge inference on Raspberry Pi detects spot occupancy and streams state updates via WebSocket to a Rust/Axum server. Features a 3D interactive model that automatically guides drivers to available spots without manual input.</p>
-                        <div class="project-tech">
-                            <span>Rust</span>
-                            <span>Axum</span>
-                            <span>Python</span>
-                            <span>YOLOv8</span>
-                            <span>WebSocket</span>
-                            <span>PostgreSQL</span>
-                        </div>
-                        <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: auto;">
-                            <a href="https://estaciona.tech/" target="_blank" class="btn btn-accent small-btn" data-i18n="proj_live_btn">Live Platform</a>
-                            <a href="https://github.com/pedrozaz/estaciona-ai" target="_blank" class="btn btn-outline small-btn" data-i18n="proj_btn">GitHub</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-card project-card reveal delay-2">
-                    <div class="project-image"
-                        style="background: url('images/yolo.png') center/cover no-repeat; height: 160px; filter: grayscale(50%) contrast(1.2);">
-                    </div>
-                    <div class="project-content">
-                        <h3><span class="mono-text" style="color: var(--text-secondary); font-size: 0.9rem; margin-right: 8px;">[02]</span> YOLOv1 from Scratch</h3>
-                        <p class="project-desc" data-i18n="proj1_desc">Scientific baseline for single-stage object
-                            detection, implemented from scratch in PyTorch. Conducted controlled experiments on Pascal
-                            VOC 2012 and engineered Gradient Accumulation to maintain effective batch sizes under
-                            hardware constraints.</p>
-                        <div class="project-tech">
-                            <span>Python 3.12</span>
-                            <span>PyTorch</span>
-                            <span>ResNet18</span>
-                        </div>
-                        <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: auto;">
-                            <a href="/yolo-from-scratch/" class="btn btn-primary small-btn" data-i18n="proj_read_btn">Read Case Study</a>
-                            <a href="https://github.com/pedrozaz/obj-detector-from-scratch/" target="_blank" class="btn btn-secondary small-btn" data-i18n="proj_btn">GitHub</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass-card project-card reveal delay-3">
-                    <div class="project-image"
-                        style="background: linear-gradient(45deg, rgba(225,29,72,0.1), rgba(15,15,15,1)); height: 160px;">
-                    </div>
-                    <div class="project-content">
-                        <h3><span class="mono-text" style="color: var(--text-secondary); font-size: 0.9rem; margin-right: 8px;">[03]</span> Redline Project</h3>
-                        <p class="project-desc" data-i18n="proj2_desc">Hybrid sports prediction system for F1 using
-                            vectorized Monte Carlo simulations. Integrated Python/TensorFlow microservices to execute
-                            thousands of probabilistic scenarios per second, served via a Java API.</p>
-                        <div class="project-tech">
-                            <span>Java 25</span>
-                            <span>Spring Boot 3</span>
-                            <span>TensorFlow</span>
-                            <span>Python</span>
-                        </div>
-                        <a href="https://github.com/pedrozaz/redline-project/" target="_blank"
-                            class="btn btn-secondary small-btn" data-i18n="proj_btn" style="margin-top: auto;">View on GitHub</a>
-                    </div>
-                </div>
-
-                <div class="glass-card project-card reveal delay-4">
-                    <div class="project-image"
-                        style="background: linear-gradient(45deg, rgba(16,185,129,0.1), rgba(15,15,15,1)); height: 160px;">
-                    </div>
-                    <div class="project-content">
-                        <h3><span class="mono-text" style="color: var(--text-secondary); font-size: 0.9rem; margin-right: 8px;">[04]</span> Geo-Matching Service</h3>
-                        <p class="project-desc" data-i18n="proj3_desc">High-performance event-driven geospatial indexing
-                            service using CQRS and Event Sourcing. Implemented an In-Memory QuadTree and an asynchronous
-                            pipeline with Kafka (KRaft) for high-throughput ingestion.</p>
-                        <div class="project-tech">
-                            <span>Java 25</span>
-                            <span>Spring Boot 3</span>
-                            <span>Apache Kafka</span>
-                        </div>
-                        <a href="https://github.com/pedrozaz/geo-matching-service/" target="_blank"
-                            class="btn btn-secondary small-btn" data-i18n="proj_btn" style="margin-top: auto;">View on GitHub</a>
-                    </div>
-                </div>
-                
-                <div class="glass-card project-card reveal delay-5">
-                    <div class="project-image"
-                        style="background: linear-gradient(45deg, rgba(255,255,255,0.05), rgba(15,15,15,1)); height: 160px;">
-                    </div>
-                    <div class="project-content">
-                        <h3><span class="mono-text" style="color: var(--text-secondary); font-size: 0.9rem; margin-right: 8px;">[05]</span> Secure Payment Service</h3>
-                        <p class="project-desc" data-i18n="proj4_desc">Financial microservice focused on ACID
-                            transactional consistency and digital wallets. Implemented Optimistic Locking to prevent
-                            Race Conditions and Double-Spending in concurrent P2P transfers.</p>
-                        <div class="project-tech">
-                            <span>Java 21</span>
-                            <span>Spring Boot 3</span>
-                            <span>PostgreSQL</span>
-                        </div>
-                        <a href="https://github.com/pedrozaz/secure-payment-service/" target="_blank"
-                            class="btn btn-secondary small-btn" data-i18n="proj_btn" style="margin-top: auto;">View on GitHub</a>
-                    </div>
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;">
+                    <a href="mailto:guilhermebarb0sa@proton.me" class="btn-brutalist filled" data-magnetic data-i18n="contact_btn1">EMAIL ME</a>
+                    <a href="https://www.linkedin.com/in/pedrozagui/" target="_blank" class="btn-brutalist" data-magnetic>LINKEDIN</a>
                 </div>
             </div>
         </section>
 
-        <section id="hackathons" class="section">
-            <div class="section-title reveal">
-                <h2><span data-i18n="hack_title1">Honors &</span> <span class="gradient-text"
-                        data-i18n="hack_title2">Hackathons</span></h2>
-                <div class="line"></div>
-            </div>
-            <div class="about-container reveal delay-1">
-                <div class="glass-card about-card" style="border-left: 4px solid var(--accent-red);">
-                    <h3>NASA Space Apps 2025 - Meteor Madness</h3>
-                    <p class="subtitle"
-                        style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 1rem; margin-top: 0.5rem;"
-                        data-i18n="hack_role">Project Leader & Backend Developer | Team "BUG BUSTERS"</p>
-                    <p data-i18n="hack_desc">
-                        Led the team in developing a real-time asteroid impact simulator using NASA NeoWs API data. Engineered the backend physics engine for orbital mechanics calculations, estimating kinetic damage, and integrating topographic data.
-                    </p>
-                    <div class="project-tech" style="margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                        <span>Java 25</span>
-                        <span>Spring Boot 3</span>
-                        <span data-i18n="hack_tech">Physics Algorithms</span>
-                        <span>Three.js</span>
-                        <span>TypeScript</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="section">
-            <div class="glass-card contact-card reveal">
-                <h2><span data-i18n="contact_title1">Let's build something</span> <span class="gradient-text"
-                        data-i18n="contact_title2">amazing</span></h2>
-                <p style="margin-bottom: 0.5rem;" data-i18n="contact_p1">I'm currently available for research collaborations, internships, and academic opportunities.</p>
-                <p style="margin-bottom: 2rem; font-size: 0.95rem;">
-                    <strong data-i18n="contact_loc">Location:</strong> Uberlândia-MG, Brazil <span
-                        style="margin: 0 10px; color: var(--surface-border);">|</span> <strong data-i18n="contact_phone">Phone:</strong> <a
-                        href="tel:+5534988957343" style="color: var(--accent-green); text-decoration: none;">+55 34
-                        98895-7343</a>
-                </p>
-                <div class="contact-links">
-                    <a href="mailto:guilhermebarb0sa@proton.me" class="btn btn-primary" data-i18n="contact_btn1">Email Me</a>
-                    <a href="https://www.linkedin.com/in/pedrozagui/" target="_blank"
-                        class="btn btn-secondary">LinkedIn</a>
-                </div>
-            </div>
-        </section>
     </main>
 
-    <footer>
-        <p><span data-i18n="footer_cr">&copy; 2026 Guilherme Pedroza.</span> <span data-i18n="footer_msg">Engineered with precision.</span></p>
-    </footer>
-
-    <script>
-        const translations = {
-            en: {
-                nav_about: "About",
-                nav_skills: "Skills",
-                nav_projects: "Projects",
-                nav_hackathons: "Hackathons",
-                nav_contact: "Contact",
-                hero_badge: "Available for Work",
-                hero_hi: "Hi, I'm",
-                hero_subtitle: "Computer Engineering Student",
-                hero_desc: "Undergraduate student exploring backend development, computer vision, and machine learning. Always learning and building projects with Java, Rust, and Python.",
-                hero_cta1: "Explore Work",
-                hero_cta2: "GitHub Profile",
-                about_title1: "About",
-                about_title2: "Me",
-                about_p1: "I'm a Computer Engineering undergraduate student based in Uberlândia-MG, Brazil. I'm highly passionate about software development and currently diving deep into machine learning and backend engineering.",
-                about_p2: "My journey involves exploring the intersection of AI and backend systems. I've been gaining hands-on experience by building projects — from implementing object detection models to developing real-time services using <strong>Java</strong>, <strong>Python</strong>, and <strong>Rust</strong>.",
-                about_p3: "I'm driven by curiosity and the desire to solve real-world problems. Whether it's participating in hackathons like NASA Space Apps or researching computer vision, I'm always looking for opportunities to learn, contribute, and grow as an engineer.",
-                skills_title1: "Tech",
-                skills_title2: "Stack",
-                skill_ds: "Distributed Systems",
-                proj_title1: "Featured",
-                proj_title2: "Projects",
-                proj0_desc: "Real-time parking guidance system combining computer vision, distributed systems, and mobile navigation. YOLOv8 edge inference on Raspberry Pi detects spot occupancy and streams state updates via WebSocket to a Rust/Axum server. Features a 3D interactive model that automatically guides drivers to available spots without manual input.",
-                proj1_desc: "Scientific baseline for single-stage object detection, implemented from scratch in PyTorch. Conducted controlled experiments on Pascal VOC 2012 and engineered Gradient Accumulation to maintain effective batch sizes under hardware constraints.",
-                proj2_desc: "Hybrid sports prediction system for F1 using vectorized Monte Carlo simulations. Integrated Python/TensorFlow microservices to execute thousands of probabilistic scenarios per second, served via a Java API.",
-                proj3_desc: "High-performance event-driven geospatial indexing service using CQRS and Event Sourcing. Implemented an In-Memory QuadTree and an asynchronous pipeline with Kafka (KRaft) for high-throughput ingestion.",
-                proj4_desc: "Financial microservice focused on ACID transactional consistency and digital wallets. Implemented Optimistic Locking to prevent Race Conditions and Double-Spending in concurrent P2P transfers.",
-                proj_btn: "GitHub",
-                proj_read_btn: "Read Case Study",
-                proj_live_btn: "Live Platform",
-                hack_title1: "Honors &",
-                hack_title2: "Hackathons",
-                hack_role: "Project Leader & Backend Developer | Team \"BUG BUSTERS\"",
-                hack_desc: "Led the team in developing a real-time asteroid impact simulator using NASA NeoWs API data. Engineered the backend physics engine for orbital mechanics calculations, estimating kinetic damage, and integrating topographic data.",
-                hack_tech: "Physics Algorithms",
-                contact_title1: "Let's build something",
-                contact_title2: "amazing",
-                contact_p1: "I'm currently available for research collaborations, internships, and academic opportunities.",
-                contact_loc: "Location:",
-                contact_phone: "Phone:",
-                contact_btn1: "Email Me",
-                footer_cr: "&copy; 2026 Guilherme Pedroza.",
-                footer_msg: "Engineered with precision."
-            },
-            pt: {
-                nav_about: "Sobre",
-                nav_skills: "Skills",
-                nav_projects: "Projetos",
-                nav_hackathons: "Hackathons",
-                nav_contact: "Contato",
-                hero_badge: "Disponível para Trabalho",
-                hero_hi: "Olá, eu sou",
-                hero_subtitle: "Estudante de Engenharia da Computação",
-                hero_desc: "Estudante de graduação explorando desenvolvimento backend, visão computacional e machine learning. Sempre aprendendo e criando projetos com Java, Rust e Python.",
-                hero_cta1: "Ver Projetos",
-                hero_cta2: "Perfil no GitHub",
-                about_title1: "Sobre",
-                about_title2: "Mim",
-                about_p1: "Sou estudante de Engenharia da Computação em Uberlândia-MG, Brasil. Sou apaixonado por desenvolvimento de software e atualmente estou mergulhando de cabeça em machine learning e engenharia backend.",
-                about_p2: "Minha jornada envolve explorar a interseção entre IA e sistemas backend. Tenho ganhado experiência prática construindo projetos — desde a implementação de modelos de detecção de objetos até o desenvolvimento de serviços em tempo real usando <strong>Java</strong>, <strong>Python</strong> e <strong>Rust</strong>.",
-                about_p3: "Sou movido pela curiosidade e pela vontade de resolver problemas reais. Seja participando de hackathons como o NASA Space Apps ou pesquisando visão computacional, estou sempre em busca de oportunidades para aprender, contribuir e crescer como engenheiro.",
-                skills_title1: "Tech",
-                skills_title2: "Stack",
-                skill_ds: "Sistemas Distribuídos",
-                proj_title1: "Projetos em",
-                proj_title2: "Destaque",
-                proj0_desc: "Sistema de orientação de estacionamento em tempo real combinando visão computacional, sistemas distribuídos e navegação mobile. Inferência em edge com YOLOv8 via Raspberry Pi para detectar ocupação de vagas e transmitir atualizações via WebSocket para um servidor Rust/Axum. Apresenta um modelo interativo 3D que guia automaticamente os motoristas sem necessidade de toque.",
-                proj1_desc: "Baseline científico para detecção de objetos single-stage, implementado do zero em PyTorch. Condução de experimentos controlados no Pascal VOC 2012 e engenharia de Gradient Accumulation para manter o tamanho de lote efetivo sob restrição de hardware.",
-                proj2_desc: "Sistema híbrido de predição esportiva para F1 utilizando simulações de Monte Carlo vetorizadas. Integração de microsserviços Python/TensorFlow para executar milhares de cenários probabilísticos por segundo, servidos via API Java.",
-                proj3_desc: "Serviço de indexação geoespacial orientado a eventos e de alta performance utilizando CQRS e Event Sourcing. Implementação de uma QuadTree in-memory e pipeline assíncrono com Kafka (KRaft) para ingestão de alto rendimento.",
-                proj4_desc: "Microsserviço financeiro focado em consistência transacional ACID e carteiras digitais. Implementação de Optimistic Locking para prevenir Race Conditions e Double-Spending em transferências P2P concorrentes.",
-                proj_btn: "GitHub",
-                proj_read_btn: "Ler Artigo",
-                proj_live_btn: "Acessar Plataforma",
-                hack_title1: "Honrarias e",
-                hack_title2: "Hackathons",
-                hack_role: "Líder de Projeto & Desenvolvedor Backend | Equipe \"BUG BUSTERS\"",
-                hack_desc: "Liderei a equipe no desenvolvimento de um simulador de impacto de asteroides em tempo real usando dados da API NeoWs da NASA. Engenharia do motor de física do backend para cálculos de mecânica orbital, estimativa de dano cinético e integração de dados topográficos.",
-                hack_tech: "Algoritmos de Física",
-                contact_title1: "Vamos construir algo",
-                contact_title2: "incrível",
-                contact_p1: "Estou atualmente disponível para colaborações de pesquisa, estágios e oportunidades acadêmicas.",
-                contact_loc: "Localização:",
-                contact_phone: "Telefone:",
-                contact_btn1: "Enviar Email",
-                footer_cr: "&copy; 2026 Guilherme Pedroza.",
-                footer_msg: "Construído com precisão."
-            }
-        };
-
-        let currentLang = 'en';
-        function setLanguage(lang) {
-            if (currentLang === lang) return;
-            currentLang = lang;
-
-            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-            document.getElementById('lang-pt').classList.toggle('active', lang === 'pt');
-            document.documentElement.lang = currentLang;
-
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[currentLang][key]) {
-                    el.innerHTML = translations[currentLang][key];
-                }
-            });
-        }
-
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.15
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.reveal').forEach(el => {
-            observer.observe(el);
-        });
-
-        const nav = document.querySelector('.glass-nav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                nav.style.background = 'rgba(3, 3, 3, 0.9)';
-                nav.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.8)';
-            } else {
-                nav.style.background = 'rgba(5, 5, 5, 0.6)';
-                nav.style.boxShadow = 'none';
-            }
-        });
-    </script>
+    <!-- DEEP-DIVE MODAL (JDM TECH SYSTEM) -->
+    <div id="deep-dive-modal" class="modal-overlay">
+        <div class="modal-close" id="modal-close" data-magnetic>&times;</div>
+        
+        <div class="modal-content-wrapper">
+            <!-- Left Side: Blueprint Display -->
+            <div class="modal-visual blueprint-container" id="modal-blueprint" style="--bp-color: #fff;">
+                <div class="blueprint-bg" id="modal-bg"></div>
+                <div class="blueprint-overlay scanline"></div>
+                <div class="blueprint-data-overlay" id="modal-telemetry">
+                    <span>> CONNECTING...</span>
+                </div>
+                <h2 class="blueprint-title" id="modal-title">TITLE</h2>
+            </div>
+            
+            <!-- Right Side: Technical Documentation -->
+            <div class="modal-text" data-lenis-prevent>
+                <div class="modal-header">
+                    <div class="modal-subtitle" id="modal-subtitle">SUBTITLE</div>
+                </div>
+                
+                <div class="modal-article" id="modal-article">
+                    <!-- Content injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
-
 </html>
